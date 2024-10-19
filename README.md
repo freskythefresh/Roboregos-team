@@ -84,13 +84,6 @@ candidates2024-robot/
 ├── TrackC.ino          # Código para la Pista C (Laberinto)
 ├── Seesaw.ino          # Código para el sube y baja
 ├── main.ino            # Código principal que coordina las pistas y el sube y baja
-│
-├── docs/               # Documentación adicional
-│   ├── hardware_schematics.png   # Esquema de conexión de hardware
-│   └── logbook_template.md       # Plantilla para la bitácora de avances
-│
-├── README.md           # Este archivo
-└── LICENSE             # Licencia del proyecto
 
 Descripción de los Archivos Principales
 
@@ -107,10 +100,10 @@ Cada miembro del equipo debe documentar su trabajo en este apartado, indicando q
 [Daniel Alejandro Garcia Montiel A01253469]
 
     Tareas principales:
-Mecanica y construccion del robot.
-Sensor de lineas Seguidor.
+    Mecanica y construccion del robot.
+    Sensor de lineas Seguidor.
     Cambios realizados:
-Crear repositorio lineamientos, leer el manual del reto y estipular lo que se debe hacer en cada parte.
+    Crear repositorio lineamientos, leer el manual del reto y estipular lo que se debe hacer en cada parte.
 
 [Nombre del Miembro 2]
 
@@ -142,11 +135,11 @@ Crear repositorio lineamientos, leer el manual del reto y estipular lo que se de
         6. Registro de Cambios
 
 Mantén un historial de los cambios más importantes realizados en el proyecto.
-Versión 1.0 - [Fecha]
+Versión 1.0 - [19/10/2024]
 
     Configuración inicial del proyecto.
     Implementación de las pistas A, B, y C.
-    Primer versión de la lógica para el sube y baja.
+    Lineamientos y descripcion del reto division de labores.
 
 Versión 1.1 - [Fecha]
 
