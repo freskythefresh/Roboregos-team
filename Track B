@@ -1,0 +1,21 @@
+#Tamaño de la pista: 5 x 4 unidades (150 x 120 cm).
+#Colores involucrados:
+
+#    Línea negra sobre fondo blanco.
+
+#Componentes clave:
+
+#    Sensores infrarrojos: Seguir la línea negra.
+#    Encoders en motores: Controlar la velocidad y correcciones.
+
+#Limitaciones:
+
+#    Tamaño de la pista: 5 x 4 unidades (150 x 120 cm).
+#    Color de seguimiento: Línea negra.
+
+# START Track B
+# Usar los sensores infrarrojos para detectar la línea negra.
+# Corregir el trayecto del robot si los sensores indican que la línea está desviándose.
+# Usar los encoders para garantizar que el robot siga la línea sin sobresaltos.
+# Maximizar los puntos siguiendo el patrón seleccionado por el capitán.
+# END Track B
