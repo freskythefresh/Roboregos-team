@@ -5,7 +5,7 @@
 #    Negro: Evitar las casillas negras (dead ends).
 #    Checkpoint azul (inicio) y rojo (final).
 
-Componentes clave:
+#Componentes clave:
 
 #    Sensor de color: Detectar colores.
 #    Sensores ultrasónicos: Evitar colisiones con paredes.
