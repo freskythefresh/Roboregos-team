@@ -103,15 +103,13 @@ Descripción de los Archivos Principales
 5. Contribuciones del Equipo
 
 Cada miembro del equipo debe documentar su trabajo en este apartado, indicando qué cambios o implementaciones realizó en el proyecto.
-[Nombre del Miembro 1]
+[Daniel Alejandro Garcia Montiel A01253469]
 
     Tareas principales:
-        Implementación del código de detección de color en la Pista A.
-        Ajuste y calibración de los sensores de color.
-        Diseño del esquema de hardware.
+Mecanica y construccion del robot.
+Sensor de lineas Seguidor.
     Cambios realizados:
-        Mejora del algoritmo de control de motores usando encoders para movimientos más precisos.
-        Ajuste del rango de detección del sensor ultrasónico.
+Crear repositorio lineamientos, leer el manual del reto y estipular lo que se debe hacer en cada parte.
 
 [Nombre del Miembro 2]
 
