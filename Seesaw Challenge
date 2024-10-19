@@ -1,0 +1,23 @@
+#Tamaño del sube y baja: 3 unidades de largo (90 cm).
+#Inclinación: Máxima de 22° ± 2°.
+#Colores involucrados:
+
+#    Checkpoint verde antes de la rampa.
+
+#Componentes clave:
+
+#    Giroscopio de 3 ejes: Detectar la inclinación del robot.
+#    Sensores ultrasónicos: Evitar las paredes laterales de la rampa.
+#    Encoders rotativos: Controlar la velocidad al subir la rampa.
+
+#Limitaciones:
+
+#    Tamaño del sube y baja: 3 unidades de largo (90 cm).
+#    Inclinación máxima: 22° ± 2°.
+
+# START Seesaw Challenge
+# Usar sensores ultrasónicos para medir la distancia y evitar las paredes de la rampa.
+# Usar el giroscopio para medir la inclinación y ajustar la velocidad de los motores para evitar volcarse.
+# Controlar la subida usando los encoders para mantener la estabilidad.
+# BONUS: Mantener el equilibrio en el centro de la rampa durante 5 segundos sin tocar el suelo con ninguno de los extremos.
+# END Seesaw Challenge
