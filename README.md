@@ -103,6 +103,7 @@ Descripción de los Archivos Principales
 5. Contribuciones del Equipo
 
 Cada miembro del equipo debe documentar su trabajo en este apartado, indicando qué cambios o implementaciones realizó en el proyecto.
+
 [Daniel Alejandro Garcia Montiel A01253469]
 
     Tareas principales:
