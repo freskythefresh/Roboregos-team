@@ -1,0 +1,27 @@
+#Tamaño de la pista: 5 x 3 unidades (150 x 90 cm).
+#Colores involucrados:
+
+#    Amarillo, morado, rosa: Detectar estos colores correctamente para sumar puntos.
+#    Negro: Evitar las casillas negras (dead ends).
+#    Checkpoint azul (inicio) y rojo (final).
+
+Componentes clave:
+
+#    Sensor de color: Detectar colores.
+#    Sensores ultrasónicos: Evitar colisiones con paredes.
+#    Encoders rotativos: Para movimientos precisos.
+#   Giroscopio: Para asegurar que el robot no se desoriente en los giros.
+
+#Limitaciones:
+
+#   Tamaño de la pista: 5 x 3 unidades (150 x 90 cm).
+ #   Colores involucrados: Amarillo, morado, rosa, negro.
+
+# START Track C
+# Detectar colores usando el sensor de color:
+#    - Amarillo, morado, rosa para sumar puntos.
+#    - Evitar entrar en casillas negras (dead end).
+# Usar sensores ultrasónicos para evitar paredes y obstáculos.
+# BONUS: Contar la cantidad de casillas de cada color y detectar cuál aparece 5 veces.
+# Regresar a una casilla de ese color y señalizar con un LED o movimiento para el bonus.
+# END Track C
