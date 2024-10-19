@@ -1,3 +1,21 @@
+#Tamaño de la pista: 3 x 3 unidades (90 x 90 cm).
+#Colores involucrados:
+
+#    Pelota azul (7.5 cm de diámetro).
+#    Checkpoint verde (inicio) y rojo (final).
+
+#Componentes clave:
+
+#   Sensor de color: Detectar la pelota azul.
+#    Sensores ultrasónicos: Aproximarse sin colisionar.
+#    Motores con encoders: Controlar movimiento preciso.
+#    Encoders rotativos: Redundancia en los movimientos.
+
+#Limitaciones:
+
+#    Tamaño de la pelota: 7.5 cm de diámetro.
+#    Tamaño de la pista: 3 x 3 unidades (90 x 90 cm).
+
 # START Track A
 # Detectar la pelota azul usando el sensor de color.
 # Usar sensores ultrasónicos para medir la distancia y acercarse a la pelota.
@@ -5,20 +23,3 @@
 # Usar encoders para controlar el movimiento mientras transportas la pelota al final (checkpoint rojo).
 # BONUS: Asegurarse de que al menos el 50% de la pelota cruce la línea roja para obtener puntos extra.
 # END Track A
-
-# Colores involucrados:
-
-#    Pelota azul (7.5 cm de diámetro).
-#    Checkpoint verde (inicio) y rojo (final).
-
-#Componentes clave:
-
-#    Sensor de color: Detectar la pelota azul.
-#    Sensores ultrasónicos: Aproximarse sin colisionar.
-#    Motores con encoders: Controlar movimiento preciso.
-#   Encoders rotativos: Redundancia en los movimientos.
-
-#Limitaciones:
-
-#    Tamaño de la pelota: 7.5 cm de diámetro.
-#    Tamaño de la pista: 3 x 3 unidades (90 x 90 cm).
