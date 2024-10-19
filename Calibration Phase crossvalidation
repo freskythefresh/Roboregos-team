@@ -1,0 +1,7 @@
+# Calibrar sensores y componentes principales (no mover el robot):
+# - Sensor de color: calibrar para detectar correctamente el azul (pelota en Pista A), y los colores amarillo, morado, rosa y negro en Pista C.
+# - Sensores infrarrojos: ajustar para detectar la línea negra en Pista B.
+# - Sensores ultrasónicos: calibrar para evitar obstáculos y paredes en Pista C y rampa del sube y baja.
+# - Giroscopio: calibrar para detectar inclinación en la rampa.
+# - Motores y encoders: asegurar que los motores tengan la velocidad correcta y que los encoders garanticen precisión.
+# Verificar la posición inicial del robot en cada pista.
