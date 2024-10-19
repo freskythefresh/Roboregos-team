@@ -1,0 +1,4 @@
+# Definir una función para gestionar el lack of progress:
+# - Si el robot se queda atascado o falla en completar un reto, activar la función de "lack of progress".
+# - El robot debe regresar al último checkpoint alcanzado.
+# Reiniciar el trayecto después de reposicionar al robot en el checkpoint.
