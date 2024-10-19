@@ -27,12 +27,12 @@ Hardware Utilizado
         MPU6050.h: Para el giroscopio de 3 ejes.
 
    candidates2024-robot/
-│
-├── TrackA.ino          # Código para la Pista A (Desafío de la Pelota)
-├── TrackB.ino          # Código para la Pista B (Seguimiento de Línea)
-├── TrackC.ino          # Código para la Pista C (Laberinto)
-├── Seesaw.ino          # Código para el sube y baja
-├── main.ino            # Código principal que coordina las pistas y el sube y baja
+    │
+    ├── TrackA.ino          # Código para la Pista A (Desafío de la Pelota)
+    ├── TrackB.ino          # Código para la Pista B (Seguimiento de Línea)
+    ├── TrackC.ino          # Código para la Pista C (Laberinto)
+    ├── Seesaw.ino          # Código para el sube y baja
+    ├── main.ino            # Código principal que coordina las pistas y el sube y baja
 
 README - Competencia "Candidates 2024" - Proyecto de Robot Autónomo
 1. Descripción del Proyecto
