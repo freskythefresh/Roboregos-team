@@ -17,3 +17,8 @@
 #    Sensores ultrasónicos: Aproximarse sin colisionar.
 #    Motores con encoders: Controlar movimiento preciso.
 #   Encoders rotativos: Redundancia en los movimientos.
+
+#Limitaciones:
+
+#    Tamaño de la pelota: 7.5 cm de diámetro.
+#    Tamaño de la pista: 3 x 3 unidades (90 x 90 cm).
