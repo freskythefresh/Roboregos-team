@@ -1,0 +1,21 @@
+# Importar las bibliotecas necesarias para controlar los sensores y motores:
+# - Motores: controlar los motores con encoders de Arduino para asegurar precisión.
+# - Sensores ultrasónicos: medir la distancia para evitar colisiones en la pista C y rampa.
+# - Sensor de color: para detección de colores específicos en Pistas A y C.
+# - Sensores infrarrojos: seguir la línea negra en Pista B.
+# - Giroscopio de 3 ejes: para estabilización en el sube y baja.
+# - Encoders rotativos: redundancia en el control de movimiento.
+
+# Definir variables globales y parámetros clave:
+# - Tamaño de la pista: las unidades son de **30 x 30 cm**.
+# - Pista A: 3 x 3 unidades (90 x 90 cm).
+# - Pista B: 5 x 4 unidades (150 x 120 cm).
+# - Pista C: 5 x 3 unidades (150 x 90 cm).
+# - Sube y baja: 3 unidades de largo (90 cm), inclinación máxima de 22° ± 2°.
+# - Tamaño de la pelota azul en Pista A: **diámetro de 7.5 cm**.
+
+# Colores a detectar:
+# - **Pista A:** Pelota azul.
+# - **Pista B:** Línea negra sobre fondo blanco.
+# - **Pista C:** Amarillo, morado, rosa (correctos), negro (dead end a evitar).
+# - Checkpoints: verde (inicio), rojo (final).
