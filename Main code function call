@@ -1,4 +1,11 @@
 // Importar las bibliotecas necesarias para controlar los sensores y motores:
+
+#include <encoder.h>
+#include <Ultrasonic.h>
+#include <Adafruit_TCS34725.h>
+#include <Wire.h>
+#include <MPU6050.h>
+
 // - Motores: controlar los motores con encoders de Arduino para asegurar precisión.
 // - Sensores ultrasónicos: medir la distancia para evitar colisiones en la pista C y rampa.
 // - Sensor de color: para detección de colores específicos en Pistas A y C.
