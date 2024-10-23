@@ -92,23 +92,21 @@ Adafruit_TCS34725 colorSensor2;
 //gyroscope
 MPU6050 mpu;
 
-//calibration
-
+// Function declarations
 void SetupMotores();
 void SetupColorSensors();
 void SetupUltrasonics();
-void SetupLinesensor();
+void SetupLineSensor();
 void SetupGyroscope();
-void SetupWheelposition();
+void SetupWheelPosition();
 void SetupMap();
 
-
-//Main Functions
+// Main Functions
 void Motores();
 void ColorSensors();
 void MainUltrasonics();
-void ballultrasonic();
-void Linesensor();
+void BallUltrasonic();
+void LineSensor();
 void Gyroscope();
 void WheelPosition();
 void MapUpdate();
@@ -127,6 +125,107 @@ void setup() {
     // Initialize gyroscope
     mpu.initialize(GYROSCOPE_SDA, GYROSCOPE_SCL);
 
+    SetupMotores();
+    SetupColorSensors();
+    SetupUltrasonics();
+    SetupLineSensor();
+    SetupGyroscope();
+    SetupWheelPosition();
+    SetupMap();
+
+    Serial.print("Setup Complete");
+}
+
+void loop() {
+    Motores();
+    ColorSensors();
+    MainUltrasonics();
+    BallUltrasonic();
+    LineSensor();
+    Gyroscope();
+    WheelPosition();
+    MapUpdate();
+
+}
+
+// Function to set up motors
+void SetupMotores() {
+    pinMode(H_BRIDGE_MOTOR_1_A, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_1_B, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_2_A, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_2_B, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_3_A, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_3_B, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_4_A, OUTPUT);
+    pinMode(H_BRIDGE_MOTOR_4_B, OUTPUT);
+}
+
+// Function to set up color sensors
+void SetupColorSensors() {
+    colorSensor1.begin(COLOR_SENSOR_1_SDA, COLOR_SENSOR_1_SCL);
+    colorSensor2.begin(COLOR_SENSOR_2_SDA, COLOR_SENSOR_2_SCL);
+}
+
+// Function to set up ultrasonic sensors
+void SetupUltrasonics() {
+    for (int i = 0; i < 8; i++) {
+        pinMode(ultrasonicSensors[i].trigPin, OUTPUT);
+        pinMode(ultrasonicSensors[i].echoPin, INPUT);
+    }
+}
+
+// Function to set up line sensor
+void SetupLineSensor() {
+    pinMode(LINE_SENSOR_PIN, INPUT);
+}
+
+// Function to set up gyroscope
+void SetupGyroscope() {
+    mpu.initialize();
+}
+
+// Function to set up wheel position (add your logic here)
+void SetupWheelPosition() {
+    // Initialize wheel position tracking if applicable
+}
+
+// Function to set up map (add your logic here)
+void SetupMap() {
+    // Set up any necessary mapping configurations
+}
+
+// Define the main functions below
+void Motores() {
+    // Add logic to control motors
+}
+
+void ColorSensors() {
+    // Add logic to read color sensors and process their output
+}
+
+void MainUltrasonics() {
+    // Add logic for main ultrasonic sensor processing
+}
+
+void BallUltrasonic() {
+    // Logic for detecting ball with ultrasonic sensor
+}
+
+void LineSensor() {
+    // Logic for following line using line sensors
+}
+
+void Gyroscope() {
+    // Logic for handling gyroscope readings and stabilization
+}
+
+void WheelPosition() {
+    // Logic for tracking wheel position
+}
+
+void MapUpdate() {
+    // Logic for updating the robot's map or position
+}
 
 // - Motores: controlar los motores con encoders de Arduino para asegurar precisión.
 // - Sensores ultrasónicos: medir la distancia para evitar colisiones en la pista C y rampa.
