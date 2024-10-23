@@ -348,6 +348,7 @@ void LineSensor() {
 >>>>>>> e9321a777561cfc3a5c6b1e3fbd1a293f0a3b58d
 }
 
+void Gyroscope(); {
 mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
 // Apply calibration offsets
@@ -380,6 +381,7 @@ Serial.println(accelAngleXY);
 
 delay(dt);
 
+}
 
 void WheelPosition() {
     // Logic for tracking wheel position
