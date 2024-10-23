@@ -4,14 +4,16 @@
 #include <Adafruit_TCS34725.h>
 #include <Wire.h>
 #include <MPU6050.h>
+#include <I2Cdev.h>
 
 #define LINE_SENSOR_PIN A0  // Line sensor with 8 mini infrared sensors
 #define COLOR_SENSOR_1_SDA A4  // Color sensor 1 (Adafruit TCS34725) SDA
 #define COLOR_SENSOR_1_SCL A5  // Color sensor 1 SCL
 #define COLOR_SENSOR_2_SDA A6  // Color sensor 2 SDA
 #define COLOR_SENSOR_2_SCL A7  // Color sensor 2 SCL
-#define GYROSCOPE_SDA A8  // MPU6050 Gyroscope SDA
-#define GYROSCOPE_SCL A9  // MPU6050 Gyroscope SCL
+#define GYROSCOPE_SDA A8
+#define GYROSCOPE_SCL A9
+#define OUTPUT_READABLE_ACCELGYRO
 
 // Integrated Motor Encoder Pins
 #define MOTOR_ENCODER_1_PIN_A 3
@@ -89,8 +91,42 @@ Ultrasonic ultrasonicSensors[8] = {
 Adafruit_TCS34725 colorSensor1;
 Adafruit_TCS34725 colorSensor2;
 
+
+int i;
+
+
 //gyroscope
 MPU6050 mpu;
+
+float angleX = 0.0; // Initialize angleX
+float angleY = 0.0; // Initialize angleY
+
+float ax, ay, az, gx, gy, gz;
+float xAccelOffset, yAccelOffset, zAccelOffset; // Calibration offsets
+float xGyroOffset, yGyroOffset, zGyroOffset; // Calibration offsets
+float alpha = 0.98; // Complementary filter constant
+float dt = 0.01; // Time interval (adjust based on your setup)
+
+const int usDelay = 3150; // Delay in ms to hold the sampling at 200Hz
+const int NFast = 1000; // Number of quick readings for averaging, the higher the better
+const int NSlow = 10000; // Number of slow readings for averaging, the higher the better
+const int LinesBetweenHeaders = 5;
+
+const int iAx = 0;
+const int iAy = 1;
+const int iAz = 2;
+const int iGx = 3;
+const int iGy = 4;
+const int iGz = 5;
+
+int LowValue[6];
+int HighValue[6];
+int Smoothed[6];
+int LowOffset[6];
+int HighOffset[6];
+int Target[6] = {0,0,0,0,0,0};
+int LinesOut = 0;
+int N; //Averaeg++ge readings
 
 // Function declarations
 void SetupMotores();
@@ -113,7 +149,7 @@ void MapUpdate();
 
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(1000);
 
     // Initialize I2C communication for color sensors and gyroscope
     Wire.begin();
@@ -123,108 +159,216 @@ void setup() {
     colorSensor2.begin(COLOR_SENSOR_2_SDA, COLOR_SENSOR_2_SCL);
 
     // Initialize gyroscope
-    mpu.initialize(GYROSCOPE_SDA, GYROSCOPE_SCL);
+    mpu.initialize();
 
+    SetupGyroscope();
+    
     SetupMotores();
     SetupColorSensors();
     SetupUltrasonics();
     SetupLineSensor();
-    SetupGyroscope();
-    SetupWheelPosition();
-    SetupMap();
+}
+ // Gyroscope Calibration
+void SetupGyroscope() {
+    /*--Start I2C interface--*/
+    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+        Wire.begin(); 
+    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+        Fastwire::setup(400, true);
+    #endif
 
-    Serial.print("Setup Complete");
+    /* Initialize device and check connection */ 
+    Serial.println("Initializing MPU...");
+    mpu.initialize();
+    
+    if (!mpu.testConnection()) {
+        Serial.println("MPU6050 connection failed");
+        while (true);  // Infinite loop if connection fails
+    } else {
+        Serial.println("MPU6050 connection successful");
+    }
+
+    Serial.println("\nXAccel\t\tYAccel\t\tZAccel\t\tXGyro\t\tYGyro\t\tZGyro");
+    
+    // Calibrate and print offsets in a loop
+    for (int i = 6; i <= 10; i++) {
+        mpu.CalibrateAccel(i);
+        mpu.CalibrateGyro(i);
+        Serial.print(i * 100); // Total readings
+        Serial.println(" Total Readings");
+        mpu.PrintActiveOffsets();
+    }
+    Serial.println("\nAny of the above offsets will work nicely \n\nProving the PID with other method:");
 }
 
-void loop() {
-    Motores();
-    ColorSensors();
-    MainUltrasonics();
-    BallUltrasonic();
-    LineSensor();
-    Gyroscope();
-    WheelPosition();
-    MapUpdate();
-
+void SetAveraging(int NewN) {
+    N = NewN;
+    Serial.print("\nAveraging ");
+    Serial.print(N);
+    Serial.println(" readings each time");
 }
 
-// Function to set up motors
-void SetupMotores() {
-    pinMode(H_BRIDGE_MOTOR_1_A, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_1_B, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_2_A, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_2_B, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_3_A, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_3_B, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_4_A, OUTPUT);
-    pinMode(H_BRIDGE_MOTOR_4_B, OUTPUT);
-}
+void PullBracketsOut() {
+    Serial.println("Expanding:");
+    ForceHeader();
+    bool Done = false;
 
-// Function to set up color sensors
-void SetupColorSensors() {
-    colorSensor1.begin(COLOR_SENSOR_1_SDA, COLOR_SENSOR_1_SCL);
-    colorSensor2.begin(COLOR_SENSOR_2_SDA, COLOR_SENSOR_2_SCL);
-}
+    while (!Done) {
+        Done = true;
+        SetOffsets(LowOffset); // Set low offsets
+        GetSmoothed();
 
-// Function to set up ultrasonic sensors
-void SetupUltrasonics() {
-    for (int i = 0; i < 8; i++) {
-        pinMode(ultrasonicSensors[i].trigPin, OUTPUT);
-        pinMode(ultrasonicSensors[i].echoPin, INPUT);
+        for (int i = 0; i <= 5; i++) { // Get low values
+            LowValue[i] = Smoothed[i];
+            if (LowValue[i] >= Target[i]) {
+                Done = false;
+                LowOffset[i] -= 1000; // Adjust low offset
+            }
+        }
+
+        SetOffsets(HighOffset);
+        GetSmoothed();
+
+        for (int i = 0; i <= 5; i++) { // Get high values
+            HighValue[i] = Smoothed[i];
+            if (HighValue[i] <= Target[i]) {
+                Done = false;
+                HighOffset[i] += 1000; // Adjust high offset
+            }
+        }
     }
 }
 
-// Function to set up line sensor
-void SetupLineSensor() {
-    pinMode(LINE_SENSOR_PIN, INPUT);
+void PullBracketsIn() {
+    Serial.println("\nClosing in:");
+    ForceHeader();
+    bool AllBracketsNarrow = false;
+    bool StillWorking = true;
+
+    while (StillWorking) {
+        StillWorking = false;
+        if (AllBracketsNarrow && (N == NFast)) {
+            SetAveraging(NSlow);
+        } else {
+            AllBracketsNarrow = true;
+        }
+
+        int NewOffset[6];
+        for (int i = 0; i <= 5; i++) {
+            if (HighOffset[i] <= (LowOffset[i] + 1)) {
+                NewOffset[i] = LowOffset[i];
+            } else {
+                StillWorking = true;
+                NewOffset[i] = (LowOffset[i] + HighOffset[i]) / 2;
+                if (HighOffset[i] > (LowOffset[i] + 10)) {
+                    AllBracketsNarrow = false;
+                }
+            }
+        }
+        SetOffsets(NewOffset);
+        GetSmoothed();
+
+        for (int i = 0; i <= 5; i++) { // Closing in
+            if (Smoothed[i] > Target[i]) {
+                HighOffset[i] = NewOffset[i];
+            } else {
+                LowOffset[i] = NewOffset[i];
+            }
+        }
+    }
 }
 
-// Function to set up gyroscope
-void SetupGyroscope() {
-    mpu.initialize();
+/* Function to smooth the read values */
+void GetSmoothed() {
+    int16_t RawValue[6];
+    long Sums[6] = {0};
+
+    for (int i = 1; i <= N; i++) { 
+        mpu.getMotion6(&RawValue[iAx], &RawValue[iAy], &RawValue[iAz], &RawValue[iGx], &RawValue[iGy], &RawValue[iGz]);
+        delayMicroseconds(usDelay);
+        for (int j = 0; j <= 5; j++) {
+            Sums[j] += RawValue[j];
+        }
+    }
+
+    for (int i = 0; i <= 5; i++) {
+        Smoothed[i] = (Sums[i] + N / 2) / N;  // Round to nearest integer
+    }
 }
 
-// Function to set up wheel position (add your logic here)
+/* Function to configure the obtained offsets */
+void SetOffsets(int TheOffsets[6]) {
+    mpu.setXAccelOffset(TheOffsets[iAx]);
+    mpu.setYAccelOffset(TheOffsets[iAy]);
+    mpu.setZAccelOffset(TheOffsets[iAz]);
+    mpu.setXGyroOffset(TheOffsets[iGx]);
+    mpu.setYGyroOffset(TheOffsets[iGy]);
+    mpu.setZGyroOffset(TheOffsets[iGz]);
+}
+
 void SetupWheelPosition() {
-    // Initialize wheel position tracking if applicable
-}
 
-// Function to set up map (add your logic here)
+}
+  
+
 void SetupMap() {
-    // Set up any necessary mapping configurations
+
 }
 
-// Define the main functions below
+//Main Functions
 void Motores() {
-    // Add logic to control motors
+
 }
 
 void ColorSensors() {
-    // Add logic to read color sensors and process their output
+
 }
 
 void MainUltrasonics() {
-    // Add logic for main ultrasonic sensor processing
+ 
 }
 
 void BallUltrasonic() {
-    // Logic for detecting ball with ultrasonic sensor
+    
 }
 
 void LineSensor() {
-    // Logic for following line using line sensors
+    
 }
 
 void Gyroscope() {
-    // Logic for handling gyroscope readings and stabilization
+
+  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+
+  // Apply calibration offsets
+  ax -= xAccelOffset;
+  ay -= yAccelOffset;
+  az -= zAccelOffset;
+  gx -= xGyroOffset;
+  gy -= yGyroOffset;
+  gz -= zGyroOffset;
+
+  float accelAngleX = atan2(ay, az) * RAD_TO_DEG; // Angle from accelerometer
+  float accelAngleY = atan2(ax, az) * RAD_TO_DEG; // Angle from accelerometer
+
+  angleX = alpha * (angleX + gx * dt) + (1 - alpha) * accelAngleX;
+  angleY = alpha * (angleY + gy * dt) + (1 - alpha) * accelAngleY;
+
+  // Output angles
+  Serial.print("Angle X: ");
+  Serial.print(angleX);
+  Serial.print("\tAngle Y: ");
+  Serial.println(angleY);
+
+  delay(dt);
 }
 
 void WheelPosition() {
-    // Logic for tracking wheel position
+   
 }
 
 void MapUpdate() {
-    // Logic for updating the robot's map or position
+  
 }
 
 // - Motores: controlar los motores con encoders de Arduino para asegurar precisión.
