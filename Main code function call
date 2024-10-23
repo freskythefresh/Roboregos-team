@@ -5,8 +5,10 @@
 #include <Wire.h>
 #include <MPU6050.h>
 #include <I2Cdev.h>
+#include <QTRSensors.h
 
 #define LINE_SENSOR_PIN A0  // Line sensor with 8 mini infrared sensors
+#define QTR_Sensors 8
 #define COLOR_SENSOR_1_SDA A4  // Color sensor 1 (Adafruit TCS34725) SDA
 #define COLOR_SENSOR_1_SCL A5  // Color sensor 1 SCL
 #define COLOR_SENSOR_2_SDA A6  // Color sensor 2 SDA
@@ -94,6 +96,13 @@ Adafruit_TCS34725 colorSensor2;
 
 int i;
 
+//Line sensor
+QTRSensorsAnalog qtrrc((unsigned char[]) {A0, A1, A2, A3, A4, A5, A6, A7}, QTR_Sensors, TIMEOUT, LINE_SENSOR_PIN);
+
+unsigned int sensorValues[QTR_Sensors]; 
+
+int minSensorValue;
+int maxSensorValue;
 
 //gyroscope
 MPU6050 mpu;
@@ -126,7 +135,7 @@ int LowOffset[6];
 int HighOffset[6];
 int Target[6] = {0,0,0,0,0,0};
 int LinesOut = 0;
-int N; //Averaeg++ge readings
+int N; //Average readings
 
 // Function declarations
 void SetupMotores();
@@ -297,7 +306,7 @@ void GetSmoothed() {
 }
 
 /* Function to configure the obtained offsets */
-void SetOffsets(int TheOffsets[6]) {
+    void SetOffsets(int TheOffsets[6]) {
     mpu.setXAccelOffset(TheOffsets[iAx]);
     mpu.setYAccelOffset(TheOffsets[iAy]);
     mpu.setZAccelOffset(TheOffsets[iAz]);
@@ -305,6 +314,36 @@ void SetOffsets(int TheOffsets[6]) {
     mpu.setYGyroOffset(TheOffsets[iGy]);
     mpu.setZGyroOffset(TheOffsets[iGz]);
 }
+
+void SetupLineSensor() {
+    // Begin calibration process
+    Serial.println("Calibrating line sensor");
+    
+    // Capture minimum and maximum values for each sensor
+    for (int i = 0; i < QTR_Sensors; i++) {
+        minSensorValue = 1023;  // Reset min value
+        maxSensorValue = 0;     // Reset max value
+    }
+
+    for (int i = 0; i < 1000; i++) {  
+        qtrrcSensor.read(sensorValues);
+    for (int j = 0; j < QTR_Sensors; j++) {
+            if (sensorValues[j] < minSensorValue)
+                minSensorValue = sensorValues[j];
+            if (sensorValues[j] > maxSensorValue)
+                maxSensorValue = sensorValues[j];
+        }
+        delay(10);
+    }
+
+    Serial.println("Calibration complete");
+    Serial.print("Min Value: ");
+    Serial.println(minSensorValue);
+    Serial.print("Max Value: ");
+    Serial.println(maxSensorValue);
+}
+
+
 
 void SetupWheelPosition() {
 
@@ -332,8 +371,29 @@ void BallUltrasonic() {
     
 }
 
+// QTR 8A Line sensor
+
 void LineSensor() {
-    
+    // Get sensor readings
+    qtrSensor.read(sensorValues);
+
+    // Use calibrated min/max values to normalize sensor readings
+    unsigned int normalizedValues[QTR_SENSOR_COUNT];
+    for (int i = 0; i < QTR_SENSOR_COUNT; i++) {
+        normalizedValues[i] = map(sensorValues[i], minSensorValues[i], maxSensorValues[i], 0, 1000);
+    }
+
+    // Calculate position on the line using normalized sensor readings
+    unsigned int position = qtrSensor.readLine(normalizedValues);
+
+    // Display sensor values and calculated position
+    Serial.print("Sensor Values: ");
+    for (int i = 0; i < QTR_SENSOR_COUNT; i++) {
+        Serial.print(sensorValues[i]);
+        Serial.print("\t");
+    }
+    Serial.print("Position: ");
+    Serial.println(position);
 }
 
 void Gyroscope() {
